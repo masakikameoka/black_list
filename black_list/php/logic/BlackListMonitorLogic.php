@@ -6,19 +6,14 @@ define('DU_IDS_FOR_TESTING', '/Users/kameokamasaki/Downloads/test/BUDU/not_black
 
 class BlackListMonitorLogic{
 
-	function verify_number_of_digits_and_fill ($file)
-	{
-		$reader = new FileReader($file);//要import
-		$number_of_lines = count(file( $file ));
-		$verify_number_results =array();
-		$error_line_array = array();
-		$empty_line_array = array();
 
+	function verify_number_of_digits_and_fill ($file_name){
 
-		foreach ($reader as $pos => $current_line) {
-
+		if(!($file = fopen($file_name, 'r+'))){
+			echo 'BlackListMonitorLogic#123';
+		}
+		while (($current_line = fgets($file)) !== false){
 			$current_line = chop($current_line);
-
 			// 空行のチェック
 			if (! strlen($current_line) > 0) {
 				$empty_line_array[] = $current_line;
@@ -44,8 +39,11 @@ class BlackListMonitorLogic{
 			if ($zeros_to_add > 0) {
 				for (; $zeros_to_add > 0; $zeros_to_add--) {
 					$current_line = '0' . $current_line;
+					fwrite($file, $current_line);
 				}
 			}
+			fclose($file_name);
+			$number_of_lines = $current_line;
 		}
 
 		//全行数
@@ -62,9 +60,9 @@ class BlackListMonitorLogic{
 		if(count($empty_line_array) > 0){
 			$verify_number_results['empty_line_array'] =$error_line_array;
 		}
-
 		return $verify_number_results;
 	}
+
 
 	// Remove the ids from another list
 	// list_to_removeのarrayのIDをlist_to_fixから省きます。
