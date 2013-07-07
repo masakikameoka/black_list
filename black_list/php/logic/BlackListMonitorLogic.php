@@ -118,6 +118,7 @@ class BlackListMonitorLogic{
 		return $uniqued_array;
 	}
 
+	//ƒtƒ@ƒCƒ‹‚©‚çIDŽæ“¾
 	function get_blacklist_id($file_name){
 
 		if(!($file = fopen($file_name, 'r'))){
