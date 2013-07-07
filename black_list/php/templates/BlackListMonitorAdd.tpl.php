@@ -1,4 +1,23 @@
 <html>
+<script type="text/javascript">
+function window_open()
+{
+	if(window.confirm('登録しますか？')){
+		document.add_form.action = "/black_list/black_list/php/action/BlackListMonitorAddAction.class.php";
+		document.add_form.submit();
+
+
+	}
+	// 「OK」時の処理終了
+
+	// 「キャンセル」時の処理開始
+	else{
+
+		window.alert('キャンセルされました'); // 警告ダイアログを表示
+
+	}
+}
+</script>
 
 <head>
 <title>ブラックリスト登録・削除画面</title>
@@ -7,19 +26,19 @@
 <body>
 <h2>ブラックリストモニター登録</h2>
 
-<?php 
+<?php
 $flag = null;
 if(isset($_GET['add_flag'])){
 	$flag = $_GET['add_flag'];
 }
 if($flag == 'false' ||  $flag == null){?>
 <form action="/black_list/black_list/php/action/BlackListMonitorAddAction.class.php" method="post"
-enctype="multipart/form-data">
+enctype="multipart/form-data" id="add_form">
 
 <label for="file">Filename:</label>
 <input type="file" name="update_file" id="file" />
 <br />
-<input type="submit" name="submit" value="登録する" />
+<input type="button" value="登録する" onclick="window_open()" />
 </form>
 <?php }elseif($flag == 'true'){?>
 現在処理中です。<br>
@@ -34,7 +53,7 @@ enctype="multipart/form-data">
 <?php }?>
 
 <h2>ブラックリストモニター解除</h2>
-<?php 
+<?php
 $flag = null;
 if(isset($_GET['deadd_flag'])){
 	$flag = $_GET['deadd_flag'];
