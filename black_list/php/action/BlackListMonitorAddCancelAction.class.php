@@ -29,7 +29,7 @@ class BlackListMonitorAddCancelAction{
 		
 		//一時フォルダにあるファイルと同じものをアップロード保存フォルダから削除
 		foreach($filelist as $file){
-			if(strpos($file, 'add_blacklist_id')){
+			if(strpos($file,'add_blacklist_id') !== FALSE){
 				unlink(ADD_BLACKLIST_FOLDER.'/'.$file);
 			}
 		}

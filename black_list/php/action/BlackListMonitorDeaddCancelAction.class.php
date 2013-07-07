@@ -5,6 +5,9 @@ define('COPY_ADD_BLACK_LIST_FILE', '/Users/kameokamasaki/Downloads/test/copy/add
 define('COPY_DEADD_BLACK_LIST_FILE', '/Users/kameokamasaki/Downloads/test/copy/deadd/blacklist_id.list');
 //アップロードされたファイルの保存するフォルダ
 define('DEADD_BLACKLIST_FOLDER', '/Users/kameokamasaki/Downloads/test/backup/deadd');
+
+define('TMP_UPLOAD_FOLDER','/Users/kameokamasaki/Downloads/test/tmp/deadd');
+
 require_once '../logic/BlackListMonitorLogic.php';
 
 class BlackListMonitorDeaddCancelAction{
@@ -15,22 +18,23 @@ class BlackListMonitorDeaddCancelAction{
 	
 	function execute(){
 		
-		//CSRF対策
-		
-		
-		if(!file_exists(COPY_DEADD_BLACK_LIST_FILE)){
+			if(!file_exists(COPY_DEADD_BLACK_LIST_FILE)){
 			//エラー
 		}
 		
-		$dir = DEADD_BLACKLIST_FOLDER;
-		
 		//ディレクトリ内のファイルを取り出す
-// 		$filelist=scandir($dir);
+		$filelist = scandir(TMP_UPLOAD_FOLDER);
 		
-// 		foreach($filelist as $file){
-// 			strstr($file, '')
-// 		}
-// 		unlink($filelist[count($filelist-1)]);
+		//一時フォルダにあるファイルと同じものをアップロード保存フォルダから削除
+		foreach($filelist as $file){
+			if(strpos($file, 'deadd_blacklist_id') !== FALSE){
+				unlink(DEADD_BLACKLIST_FOLDER.'/'.$file);
+			}
+		}
+		//一時フォルダにあるファイルをすべて削除
+		foreach($filelist as $file){
+			unlink(TMP_UPLOAD_FOLDER.'/'.$file);
+		}
 		unlink(COPY_DEADD_BLACK_LIST_FILE);
 	}
 }
