@@ -7,7 +7,6 @@ function confirm_add(){
 	}
 	else{
 		// 「キャンセル」時の処理開始
-		window.alert('キャンセルされました'); // 警告ダイアログを表示
 		return false;
 	}
 }
@@ -19,7 +18,6 @@ function confirm_deadd(){
 	}
 	else{
 		// 「キャンセル」時の処理開始
-		window.alert('キャンセルされました'); // 警告ダイアログを表示
 		return false;
 	}
 }
@@ -31,7 +29,6 @@ function confirm_cancel(){
 	}
 	else{
 		// 「キャンセル」時の処理開始
-		window.alert('キャンセルされました'); // 警告ダイアログを表示
 		return false;
 	}
 }
