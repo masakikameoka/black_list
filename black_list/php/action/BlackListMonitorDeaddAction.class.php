@@ -1,6 +1,6 @@
 <?php
 //アップロードされたファイルの保存するフォルダ
-define('ADD_BLACKLIST_FOLDER', '/Users/kameokamasaki/Downloads/test/backup/add');
+define('DEADD_BLACKLIST_FOLDER', '/Users/kameokamasaki/Downloads/test/backup/deadd');
 //マスタファイル
 define('ORIGINAL_BLACKLIST_FILE', '/Users/kameokamasaki/Downloads/test/original/blacklist_id.list');
 //登録用copyマスタを保存するフォルダ
@@ -9,7 +9,7 @@ define('COPY_ADD_BLACK_LIST_FILE', '/Users/kameokamasaki/Downloads/test/copy/add
 define('COPY_DEADD_BLACK_LIST_FILE', '/Users/kameokamasaki/Downloads/test/copy/deadd/blacklist_id.list');
 
 require_once '../logic/BlackListMonitorLogic.php';
-class BlackListMonitorAddAction{
+class BlackListMonitorDeaddAction{
 	
 	function init(){
 		
@@ -17,7 +17,7 @@ class BlackListMonitorAddAction{
 	
 	function execute(){
 		
-		if(file_exists(COPY_ADD_BLACK_LIST_FILE)){
+		if(file_exists(COPY_DEADD_BLACK_LIST_FILE)){
 			return false;
 		}
 		
@@ -28,32 +28,30 @@ class BlackListMonitorAddAction{
 		//アップロードファイル取得
 		$tmp_file = $_FILES['update_file']['tmp_name'];
 		/* 日にち毎にフォルダを作成 */
-		$folder_name = ADD_BLACKLIST_FOLDER.'/'.date('Y-m-d');
+		$folder_name = DEADD_BLACKLIST_FOLDER.'/'.date('Y-m-d');
 		mkdir($folder_name);
 		
 		//アップロードファイルを保存
-		$add_blacklist_file_path = $folder_name.'/add_blacklist_id_'.date('His').'.list';
-		move_uploaded_file($tmp_file, $add_blacklist_file_path);
+		$deadd_blacklist_file_path = $folder_name.'/deadd_blacklist_id_'.date('His').'.list';
+		move_uploaded_file($tmp_file, $deadd_blacklist_file_path);
 				
 		//追加するIDを配列で取得
-		$add_blacklist_ids = $this->logic->get_blacklist_id($add_blacklist_file_path);
+		$deadd_blacklist_ids = $this->logic->get_blacklist_id($deadd_blacklist_file_path);
 		
-		//省きID取得
-		$not_blacklist_all_ids = $this->logic->get_not_blacklist_all_ids();		
-		$add_blacklist_ids = $this->logic->filter_ids_from($not_blacklist_all_ids, $add_blacklist_ids)[0];
 		//マスタファイルをコピー
-		copy(ORIGINAL_BLACKLIST_FILE, COPY_ADD_BLACK_LIST_FILE);
+		copy(ORIGINAL_BLACKLIST_FILE, COPY_DEADD_BLACK_LIST_FILE);
 		
 		//マスタコピーファイルのIDを取得
-		$black_list_ids = $this->logic->get_blacklist_id(COPY_ADD_BLACK_LIST_FILE);
+		$black_list_ids = $this->logic->get_blacklist_id(COPY_DEADD_BLACK_LIST_FILE);
 		
+		$black_list_ids = $this->logic->filter_ids_from($deadd_blacklist_ids, $black_list_ids)[0];
 		//マスタコピーファイルオープン
-		if (!($fp = fopen(COPY_ADD_BLACK_LIST_FILE, 'a'))) {
+		if (!($fp = fopen(COPY_DEADD_BLACK_LIST_FILE, 'w'))) {
 			// エラー処理
 				return $br;
 		}
 		
-		foreach ($add_blacklist_ids as $id){
+		foreach ($black_list_ids as $id){
 			
 			// ファイルの書き込み
 			if (!fwrite($fp, $id . "\n")) {
@@ -67,7 +65,7 @@ class BlackListMonitorAddAction{
  	}
 }
 
-$a = new BlackListMonitorAddAction();
+$a = new BlackListMonitorDeaddAction();
 $url = 'http://localhost/black_list/black_list/php/templates/BlackListMonitorAdd.tpl.php';
 $a->execute();
 

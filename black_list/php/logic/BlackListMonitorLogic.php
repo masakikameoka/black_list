@@ -1,7 +1,11 @@
 <?php
+//BU・DU
+define('BU_IDS_FOR_TESTING', '/Users/kameokamasaki/Downloads/test/BUDU/not_blacklist_id_BU.list');//TODO ディレクトリまでのパス
+define('DU_IDS_FOR_TESTING', '/Users/kameokamasaki/Downloads/test/BUDU/not_blacklist_id_DU.list');
+
 
 class BlackListMonitorLogic{
-	
+
 	function verify_number_of_digits_and_fill ($file)
 	{
 		$reader = new FileReader($file);//要import
@@ -9,30 +13,30 @@ class BlackListMonitorLogic{
 		$verify_number_results =array();
 		$error_line_array = array();
 		$empty_line_array = array();
-		
-		
+
+
 		foreach ($reader as $pos => $current_line) {
-	
+
 			$current_line = chop($current_line);
-	
+
 			// 空行のチェック
 			if (! strlen($current_line) > 0) {
 				$empty_line_array[] = $current_line;
 				continue;
 			}
-	
+
 			// 11桁以上IDのチェック
 			if (strlen($current_line) > 11) {
 				$error_line_array[] = $current_line;
 				continue;
 			}
-	
+
 			// 数字ではない文字のチェック
 			if (! preg_match("/^[0-9]+\$/", $current_line)) {
 				$error_line_array[] = $current_line;
 				continue;
 			}
-	
+
 			// Count the number of zeroes and add them starting from the left
 			// 11桁以下があれば、11桁まで左から埋める
 			$character_count = strlen( $current_line );
@@ -43,25 +47,25 @@ class BlackListMonitorLogic{
 				}
 			}
 		}
-		
+
 		//全行数
 		if(count($number_of_lines) > 0){
 			$verify_number_results['$number_of_lines'] = $number_of_lines;
 		}
-		
+
 		//エラーのあった行
 		if(count($error_line_array) > 0){
-			$verify_number_results['error_line_array'] =$error_line_array; 
+			$verify_number_results['error_line_array'] =$error_line_array;
 		}
-		
+
 		//空行
 		if(count($empty_line_array) > 0){
 			$verify_number_results['empty_line_array'] =$error_line_array;
 		}
-		
+
 		return $verify_number_results;
 	}
-	
+
 	// Remove the ids from another list
 	// list_to_removeのarrayのIDをlist_to_fixから省きます。
 	// 省いた後、新しいリストとエラーカウントのArrayをreturnする。
@@ -69,21 +73,21 @@ class BlackListMonitorLogic{
 	function filter_ids_from ( $list_to_remove, $list_to_fix)
 	{
 		$number_of_lines_removed = 0;
-		
+
 		foreach ($list_to_fix as $key_to_remove => $list_to_fix_item) {
 			foreach ($list_to_remove as $list_to_remove_item) {
-	
+
 				if ($list_to_fix_item == $list_to_remove_item) {
-				    unset( $list_to_fix[ $key_to_remove ] );
-				    $number_of_lines_removed++;
+					unset( $list_to_fix[ $key_to_remove ] );
+					$number_of_lines_removed++;
 				}
 			}
 		}
-		
+
 		$results = array($list_to_fix, $number_of_lines_removed);
 		return $results;
 	}
-	
+
 	// Merge two lists
 	// 追加リストのIDと前のBlacklistのIDをマージします。
 	// 重複データの確認しません。
@@ -91,15 +95,15 @@ class BlackListMonitorLogic{
 	function merge_lists ($original_ids_array, $to_add_ids_array)
 	{
 		array_splice(
-			$original_ids_array, 
-			count($original_ids_array),
-			0,
-			$to_add_ids_array
+		$original_ids_array,
+		count($original_ids_array),
+		0,
+		$to_add_ids_array
 		);
-		
+
 		return $original_ids_array;
 	}
-	
+
 	// Remove repeated items, and sort the result
 	// BlacklistのIDを追加リストと比べて、
 	// 重複データがないようにチェックして、
@@ -109,15 +113,44 @@ class BlackListMonitorLogic{
 	{
 
 		$uniqued_array = array_unique($list_to_fix);
-	
-		// Method to know which IDs were repeated.
-		// 重複していたIDを調べる方法
-		$uniqued_ids = array_unique(array_diff_assoc($list_to_fix, $uniqued_array));
-		foreach ($uniqued_ids as $uniqued_ids_item) {
-			$logger->append('Repeated ID: ' . $uniqued_ids_item);
-   		 }
-	
-	    sort($uniqued_array);
-	    return $uniqued_array;
+
+		sort($uniqued_array);
+		return $uniqued_array;
+	}
+
+	function get_blacklist_id($file_name){
+
+		if(!($file = fopen($file_name, 'r'))){
+			echo 'BlackListMonitorLogic#123';
+		}
+
+		$contents = array();
+
+		while (($line = fgets($file)) !== false){
+
+			// 空行は読み飛ばす
+			if (($line = rtrim($line)) === '') {
+				continue;
+			}
+			$contents[] = $line;
+		}
+
+		fclose($file);
+
+		return $contents;
+	}
+
+	function get_not_blacklist_all_ids(){
+		//BU
+		$not_blacklist_ids_BU = $this->get_blacklist_id(BU_IDS_FOR_TESTING);
+		//DU
+		$not_blacklist_ids_DU = $this->get_blacklist_id(DU_IDS_FOR_TESTING);
+		$not_blacklist_all_ids = $this->merge_lists(
+				$not_blacklist_ids_BU,
+				$not_blacklist_ids_DU
+		);
+
+		return $not_blacklist_all_ids;
+
 	}
 }
