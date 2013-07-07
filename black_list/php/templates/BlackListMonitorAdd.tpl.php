@@ -68,7 +68,7 @@ enctype="multipart/form-data">
 <form action="/black_list/black_list/php/action/BlackListMonitorDeaddCancelAction.class.php" method="post">
 <input type="submit" name="submit" value="キャンセル">
 </form>
-<form action="" method="post">
+<form action="/black_list/black_list/php/action/BlackListUpdateDeaddFileDownLoad.class.php" method="post">
 <input type="submit" name="submit" value="ファイル確認">
 </form>
 <br />

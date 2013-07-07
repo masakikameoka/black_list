@@ -8,6 +8,7 @@ define('COPY_ADD_BLACK_LIST_FILE', '/Users/kameokamasaki/Downloads/test/copy/add
 //解除用copyマスタを保存するフォルダ
 define('COPY_DEADD_BLACK_LIST_FILE', '/Users/kameokamasaki/Downloads/test/copy/deadd/blacklist_id.list');
 
+define('TMP_UPLOAD_FOLDER','/Users/kameokamasaki/Downloads/test/tmp/deadd');
 require_once '../logic/BlackListMonitorLogic.php';
 class BlackListMonitorDeaddAction{
 	
@@ -27,14 +28,20 @@ class BlackListMonitorDeaddAction{
 		
 		//アップロードファイル取得
 		$tmp_file = $_FILES['update_file']['tmp_name'];
-		/* 日にち毎にフォルダを作成 */
-		$folder_name = DEADD_BLACKLIST_FOLDER.'/'.date('Y-m-d');
-		mkdir($folder_name);
+// 		/* 日にち毎にフォルダを作成 */
+// 		$folder_name = DEADD_BLACKLIST_FOLDER.'/'.date('Y-m-d');
+// 		mkdir($folder_name);
+		
+		$upload_file_name = '/deadd_blacklist_id_'.date('YmdHis').'.list';
+		
 		
 		//アップロードファイルを保存
-		$deadd_blacklist_file_path = $folder_name.'/deadd_blacklist_id_'.date('His').'.list';
+		$deadd_blacklist_file_path = DEADD_BLACKLIST_FOLDER.$upload_file_name;
+		$tmp_deadd_blacklist_file_path = TMP_UPLOAD_FOLDER.$upload_file_name;
+		
 		move_uploaded_file($tmp_file, $deadd_blacklist_file_path);
-				
+		copy($deadd_blacklist_file_path,$tmp_deadd_blacklist_file_path);
+						
 		//追加するIDを配列で取得
 		$deadd_blacklist_ids = $this->logic->get_blacklist_id($deadd_blacklist_file_path);
 		
