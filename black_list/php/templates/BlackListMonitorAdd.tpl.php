@@ -64,7 +64,7 @@ enctype="multipart/form-data" onsubmit="return confirm_add()">
 処理完了後メールをお送り致します。
 
 <form action="/black_list/black_list/php/action/BlackListMonitorAddCancelAction.class.php" method="post"
-onsubmit="return confirm_cancel">
+onsubmit="return confirm_cancel()">
 <input type="submit" name="submit" value="キャンセル">
 </form>
 
@@ -98,7 +98,7 @@ enctype="multipart/form-data" onsubmit="return confirm_deadd()">
 処理完了後メールをお送り致します。
 
 <form action="/black_list/black_list/php/action/BlackListMonitorDeaddCancelAction.class.php" method="post"
-onsubmit="return confirm_cancel">
+onsubmit="return confirm_cancel()">
 <input type="submit" name="submit" value="キャンセル">
 </form>
 
