@@ -18,7 +18,7 @@ class BlackListMonitorDeaddAction{
 	
 	function execute(){
 		
-		if(file_exists(COPY_ADD_BLACK_LIST_FILE)){
+		if(file_exists(COPY_DEADD_BLACK_LIST_FILE)){
 			return "既にアップロード済みです。";
 		}
 		
