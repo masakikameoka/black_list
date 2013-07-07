@@ -5,16 +5,12 @@ function window_open()
 	if(window.confirm('登録しますか？')){
 		document.add_form.action = "/black_list/black_list/php/action/BlackListMonitorAddAction.class.php";
 		document.add_form.submit();
-
-
 	}
 	// 「OK」時の処理終了
 
 	// 「キャンセル」時の処理開始
 	else{
-
 		window.alert('キャンセルされました'); // 警告ダイアログを表示
-
 	}
 }
 </script>
