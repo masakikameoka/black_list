@@ -19,8 +19,8 @@ class BlackListMonitorDeaddCancelAction{
 	function execute(){
 		
 			if(!file_exists(COPY_DEADD_BLACK_LIST_FILE)){
-			//エラー
-		}
+				return "既にキャンセルされています。";
+			}
 		
 		//ディレクトリ内のファイルを取り出す
 		$filelist = scandir(TMP_UPLOAD_FOLDER);
@@ -40,15 +40,14 @@ class BlackListMonitorDeaddCancelAction{
 }
 
 $a = new BlackListMonitorDeaddCancelAction();
-$url = 'http://localhost/black_list/black_list/php/templates/BlackListMonitorAdd.tpl.php';
-$a->execute();
-
+$result = $a->execute();
+$url = 'http://localhost/black_list/black_list/php/templates/BlackListMonitorAdd.tpl.php?result='.$result;
 if(file_exists(COPY_ADD_BLACK_LIST_FILE) && file_exists(COPY_DEADD_BLACK_LIST_FILE)){
-	$url .= '?add_flag=true&deadd_flag=true';
+	$url .= '&add_flag=true&deadd_flag=true';
 }else if(file_exists(COPY_ADD_BLACK_LIST_FILE)){
-	$url .= '?add_flag=true';
+	$url .= '&add_flag=true';
 }else if(file_exists(COPY_DEADD_BLACK_LIST_FILE)){
-	$url .= '?deadd_flag=true';
+	$url .= '&deadd_flag=true';
 }
 
  header("location: ".$url);exit;
