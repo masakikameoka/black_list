@@ -9,7 +9,6 @@ define('COPY_DEADD_BLACK_LIST_FILE', '/Users/kameokamasaki/Downloads/test/copy/d
 class BlackListIdAllDownload{
 
 	function execute(){
-		
 
 		/* オープンできるか確認 */
 		if (!($fp = fopen(ORIGINAL_BLACKLIST_FILE, "r"))) {
@@ -22,8 +21,6 @@ class BlackListIdAllDownload{
 			die("Error: File size is 0.(".$path_file.")");
 		}
 		
-		$url = 'http://localhost/black_list/black_list/php/templates/BlackListMonitorAdd.tpl.php';
-//		header("location: ".$url);exit;
 		header('Content-Disposition: inline; filename="'.ORIGINAL_BLACKLIST_FILE.'"');
 		header('Content-Length: '.$content_length);
 		header('Content-Type: application/octet-stream');

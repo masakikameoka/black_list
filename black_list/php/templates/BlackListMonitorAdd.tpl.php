@@ -34,7 +34,7 @@ enctype="multipart/form-data" id="add_form">
 <label for="file">Filename:</label>
 <input type="file" name="update_file" id="file" />
 <br />
-<input type="button" value="登録する" onclick="window_open()" />
+<input type="submit" value="登録する" />
 </form>
 <?php }elseif($flag == 'true'){?>
 現在処理中です。<br>
@@ -42,7 +42,7 @@ enctype="multipart/form-data" id="add_form">
 <form action="/black_list/black_list/php/action/BlackListMonitorAddCancelAction.class.php" method="post">
 <input type="submit" name="submit" value="キャンセル">
 </form>
-<form action="" method="post">
+<form action="/black_list/black_list/php/action/BlackListUpdateAddFileDownLoad.class.php" method="post">
 <input type="submit" name="submit" value="ファイル確認">
 </form>
 <br />
