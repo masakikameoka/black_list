@@ -1,14 +1,14 @@
 <?php
-//ƒAƒbƒvƒ[ƒh‚³‚ê‚½ƒtƒ@ƒCƒ‹‚Ì•Û‘¶‚·‚éƒtƒHƒ‹ƒ_
+//ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«ã®ä¿å­˜ã™ã‚‹ãƒ•ã‚©ãƒ«ãƒ€
 define('ADD_BLACKLIST_FOLDER', '/Users/kameokamasaki/Downloads/test/backup/add');
-//ƒ}ƒXƒ^ƒtƒ@ƒCƒ‹
+//ãƒžã‚¹ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«
 define('ORIGINAL_BLACKLIST_FILE', '/Users/kameokamasaki/Downloads/test/original/blacklist_id.list');
-//“o˜^—pcopyƒ}ƒXƒ^‚ð•Û‘¶‚·‚éƒtƒHƒ‹ƒ_
-define('COPY_ADD_BLACK_LIST_FILE', '/Users/kameokamasaki/Downloads/test/copy/add/blacklist_id.list');
-//‰ðœ—pcopyƒ}ƒXƒ^‚ð•Û‘¶‚·‚éƒtƒHƒ‹ƒ_
-define('COPY_DEADD_BLACK_LIST_FILE', '/Users/kameokamasaki/Downloads/test/copy/deadd/blacklist_id.list');
-
-define('TMP_UPLOAD_FOLDER','/Users/kameokamasaki/Downloads/test/tmp/add');
+//copyãƒžã‚¹ã‚¿ã‚’ä¿å­˜ã™ã‚‹ãƒ•ã‚©ãƒ«ãƒ€
+define('COPY_BLACK_LIST_FILE', '/Users/kameokamasaki/Downloads/test/copy/blacklist_id.list');
+define('TMP_ADD_UPLOAD_FOLDER','/Users/kameokamasaki/Downloads/test/tmp/add');
+define('TMP_DEADD_UPLOAD_FOLDER','/Users/kameokamasaki/Downloads/test/tmp/deadd');
+//ãƒ–ãƒ©ãƒƒã‚¯ãƒªã‚¹ãƒˆç™»éŒ²æ•°ä¸Šé™å€¤
+define('MAX_REGISTER_ID_NUM',500000);
 require_once '../logic/BlackListMonitorLogic.php';
 class BlackListMonitorAddAction{
 	
@@ -18,69 +18,91 @@ class BlackListMonitorAddAction{
 	
 	function execute(){
 		
-		if(file_exists(COPY_ADD_BLACK_LIST_FILE)){
-			return "Šù‚ÉƒAƒbƒvƒ[ƒhÏ‚Ý‚Å‚·B";
+		$this->logic = new BlackListMonitorLogic();
+		if($this->logic->is_match_file_exists_in_folder(TMP_ADD_UPLOAD_FOLDER, 'add_blacklist_id')){
+			return "æ—¢ã«ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰æ¸ˆã¿ã§ã™ã€‚";
 		}
 		
 		$this->logic = new BlackListMonitorLogic();
 		
 		//$logic->verify_number_of_digits_and_fill();
 		
-		//ƒAƒbƒvƒ[ƒhƒtƒ@ƒCƒ‹Žæ“¾
+		//ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ãƒ•ã‚¡ã‚¤ãƒ«å–å¾—
 		$tmp_file = $_FILES['update_file']['tmp_name'];
-// 		/* “ú‚É‚¿–ˆ‚ÉƒtƒHƒ‹ƒ_‚ðì¬ */
-// 		$folder_name = ADD_BLACKLIST_FOLDER.'/'.date('Y-m-d');
-// 		mkdir($folder_name);
-		
+
 		$upload_file_name = '/add_blacklist_id_'.date('YmdHis').'.list';
 		
-		//ƒAƒbƒvƒ[ƒhƒtƒ@ƒCƒ‹‚ð•Û‘¶
+		//ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜
 		$add_blacklist_file_path = ADD_BLACKLIST_FOLDER.$upload_file_name;
-		$tmp_add_blacklist_file_path = TMP_UPLOAD_FOLDER.$upload_file_name;
+		$tmp_add_blacklist_file_path = TMP_ADD_UPLOAD_FOLDER.$upload_file_name;
 		
 		move_uploaded_file($tmp_file, $add_blacklist_file_path);
 		copy($add_blacklist_file_path,$tmp_add_blacklist_file_path);
 				
-		//’Ç‰Á‚·‚éID‚ð”z—ñ‚ÅŽæ“¾
+		//è¿½åŠ ã™ã‚‹IDã‚’é…åˆ—ã§å–å¾—
 		$add_blacklist_ids = $this->logic->get_blacklist_id($add_blacklist_file_path);
 		
-		//È‚«IDŽæ“¾
-		$not_blacklist_all_ids = $this->logic->get_not_blacklist_all_ids();		
+		
+		//çœãIDå–å¾—
+		$not_blacklist_all_ids = $this->logic->get_exclude_blacklist_all_ids();		
 		$add_blacklist_ids = $this->logic->filter_ids_from($not_blacklist_all_ids, $add_blacklist_ids)[0];
-		//ƒ}ƒXƒ^ƒtƒ@ƒCƒ‹‚ðƒRƒs[
-		copy(ORIGINAL_BLACKLIST_FILE, COPY_ADD_BLACK_LIST_FILE);
 		
-		//ƒ}ƒXƒ^ƒRƒs[ƒtƒ@ƒCƒ‹‚ÌID‚ðŽæ“¾
-		$black_list_ids = $this->logic->get_blacklist_id(COPY_ADD_BLACK_LIST_FILE);
+		$flag =false;
 		
-		//ƒ}ƒXƒ^ƒRƒs[ƒtƒ@ƒCƒ‹ƒI[ƒvƒ“
-		if (!($fp = fopen(COPY_ADD_BLACK_LIST_FILE, 'a'))) {
-			// ƒGƒ‰[ˆ—
-				return $br;
+		if(!file_exists(COPY_BLACK_LIST_FILE)){
+			//ãƒžã‚¹ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã‚³ãƒ”ãƒ¼
+			copy(ORIGINAL_BLACKLIST_FILE, COPY_BLACK_LIST_FILE);
+			$flag = true;
 		}
 		
-		foreach ($add_blacklist_ids as $id){
-			
-			// ƒtƒ@ƒCƒ‹‚Ì‘‚«ž‚Ý
-			if (!fwrite($fp, $id . "\n")) {
-				// ƒGƒ‰[ˆ—
-				echo 'ƒ}ƒXƒ^ƒtƒ@ƒCƒ‹‘‚«ž‚ÝƒGƒ‰[';
-				break;
+		//ãƒžã‚¹ã‚¿ã‚³ãƒ”ãƒ¼ãƒ•ã‚¡ã‚¤ãƒ«ã®IDã‚’é…åˆ—ã§å–å¾—
+		$black_list_ids = $this->logic->get_blacklist_id(COPY_BLACK_LIST_FILE);
+
+		//ç™»éŒ²å¾Œã®IDæ•°ãŒä¸Šé™å€¤ã‚ˆã‚Šå¤šã„å ´åˆ
+		if(count($black_list_ids) + count($add_blacklist_ids) >= MAX_REGISTER_ID_NUM){		
+
+			if($flag){
+				unlink(COPY_BLACK_LIST_FILE);
 			}
+			
+			unlink($add_blacklist_file_path);
+			unlink($tmp_add_blacklist_file_path);
+			$result="ç™»éŒ²å¯èƒ½ä»¶æ•°ã‚’è¶…éŽã—ã¦ã„ã¾ã™ã€‚é‹ç”¨ãƒãƒ¼ãƒ ã«é€£çµ¡ã—ã¦ãã ã•ã„ã€‚";
+			return $result;
 		}
-		fclose($fp);
+		
+		$added_blacklist_ids =$this->logic->unique_check(
+				$this->logic->merge_lists($black_list_ids, $add_blacklist_ids));
+		
+		if($this->logic->copy_blacklist_writer($added_blacklist_ids, 'w')){
+			//ã‚¨ãƒ©ãƒ¼å‡¦ç†;
+			return;
+		}
+		
+		//è¿½åŠ IDæ•°
+		count($add_blacklist_ids);
+		//è¿½åŠ å‰IDæ•°
+		count($black_list_ids);
+		//è¿½åŠ å¾ŒIDæ•°
+		count($added_blacklist_ids);
+		//çœãIDåˆè¨ˆï¼ˆBUDUï¼‰
+		$this->logic->exclude_easyid_num();
+		
 		return true;
  	}
 }
 
 $a = new BlackListMonitorAddAction();
+$b = new BlackListMonitorLogic();
 $result=$a->execute();
 $url = 'http://localhost/black_list/black_list/php/templates/BlackListMonitorAdd.tpl.php?result='.$result;
-if(file_exists(COPY_ADD_BLACK_LIST_FILE) && file_exists(COPY_DEADD_BLACK_LIST_FILE)){
+$str = 'blacklist_id';
+if($b->is_match_file_exists_in_folder(TMP_ADD_UPLOAD_FOLDER,$str)
+		&& $b->is_match_file_exists_in_folder(TMP_DEADD_UPLOAD_FOLDER,$str)){
 	$url .= '&add_flag=true&deadd_flag=true';
-}else if(file_exists(COPY_ADD_BLACK_LIST_FILE)){
+}else if($b->is_match_file_exists_in_folder(TMP_ADD_UPLOAD_FOLDER,$str)){
 	$url .= '&add_flag=true';
-}else if(file_exists(COPY_DEADD_BLACK_LIST_FILE)){
+}else if($b->is_match_file_exists_in_folder(TMP_DEADD_UPLOAD_FOLDER,$str)){
 	$url .= '&deadd_flag=true';
 }
- header("location: ".$url);exit;
+header("location: ".$url);exit;

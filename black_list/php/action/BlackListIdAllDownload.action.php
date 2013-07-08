@@ -12,13 +12,13 @@ class BlackListIdAllDownload{
 
 		/* オープンできるか確認 */
 		if (!($fp = fopen(ORIGINAL_BLACKLIST_FILE, "r"))) {
-			die("Error: Cannot open the file(".$path_file.")");
+			die("Error: Cannot open the file(".ORIGINAL_BLACKLIST_FILE.")");
 		}
 		fclose($fp);
 		
 		/* ファイルサイズの確認 */
 		if (($content_length = filesize(ORIGINAL_BLACKLIST_FILE)) == 0) {
-			die("Error: File size is 0.(".$path_file.")");
+			die("Error: File size is 0.(".ORIGINAL_BLACKLIST_FILE.")");
 		}
 		
 		header('Content-Disposition: inline; filename="'.ORIGINAL_BLACKLIST_FILE.'"');

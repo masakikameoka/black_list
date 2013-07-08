@@ -2,6 +2,9 @@
 //BU・DU
 define('BU_IDS_FOR_TESTING', '/Users/kameokamasaki/Downloads/test/BUDU/not_blacklist_id_BU.list');//TODO ディレクトリまでのパス
 define('DU_IDS_FOR_TESTING', '/Users/kameokamasaki/Downloads/test/BUDU/not_blacklist_id_DU.list');
+//マスタファイル
+define('COPY_BLACK_LIST_FILE', '/Users/kameokamasaki/Downloads/test/copy/blacklist_id.list');
+
 
 
 class BlackListMonitorLogic{
@@ -141,7 +144,7 @@ class BlackListMonitorLogic{
 		return $contents;
 	}
 
-	function get_not_blacklist_all_ids(){
+	function get_exclude_blacklist_all_ids(){
 		//BU
 		$not_blacklist_ids_BU = $this->get_blacklist_id(BU_IDS_FOR_TESTING);
 		//DU
@@ -153,5 +156,46 @@ class BlackListMonitorLogic{
 
 		return $not_blacklist_all_ids;
 
+	}
+	
+	function is_match_file_exists_in_folder($folder_path,$file_name){
+		
+		$result = FALSE;
+		
+		$files = scandir($folder_path);
+		foreach ($files as $file){
+			if(strpos($file, $file_name)){
+				$result = TRUE;
+				break;
+			}
+		}
+		
+		return $result;
+	}
+	
+	//マスターコピーファイルに書き込みを行う
+	function copy_blacklist_writer($blacklist_ids,$mode){
+		//マスタコピーファイルオープン
+		if (!($fp = fopen(COPY_BLACK_LIST_FILE, $mode))) {
+			return false;
+		}
+		
+		foreach ($blacklist_ids as $id){
+				
+			// ファイルの書き込み
+			if (!fwrite($fp, $id . "\n")) {
+				// エラー処理
+				echo 'マスタファイル書き込みエラー';
+				break;
+			}
+		}
+		fclose($fp);
+		return true;
+	}
+	
+	function exclude_easyid_num(){
+		$count = count($this->get_exclude_blacklist_all_ids());
+		
+		return $count;
 	}
 }
